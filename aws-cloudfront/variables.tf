@@ -4,6 +4,11 @@ description = "The account ID of the AWS account where the S3 bucket is located.
   type = string
 }
 
+variable "domain_name" {
+  description = "The domain name for the CloudFront distribution."
+  type        = string
+}
+
 variable "source_bucket_name" {
   description = "The base name of the S3 bucket."
   type        = string
@@ -22,16 +27,6 @@ variable "root_object_name" {
 
 variable "cdn_name" {
   description = "The name of the CloudFront CDN distribution."
-  type        = string
-}
-
-variable "domain_prefix" {
-  description = "The subdomain prefix for the CloudFront distribution."
-  type        = string
-}
-
-variable "domain_root" {
-  description = "The root domain name for the CloudFront distribution."
   type        = string
 }
 

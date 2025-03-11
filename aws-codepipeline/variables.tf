@@ -1,109 +1,100 @@
+################################################################################
+# Variables
+################################################################################
+
 variable "project_name" {
-  type = string
+  description = "The name of the project. Used in resource naming."
+  type        = string
 }
 
 variable "pipeline_name" {
-  type = string
-}
-
-variable "source_connection_arn" {
-  type = string
-}
-
-variable "description" {
-  type    = string
-  default = "terrafrom managed project"
-}
-
-variable "compute_type" {
-  type    = string
-  default = "BUILD_GENERAL1_MEDIUM"
-}
-
-variable "image" {
-  type    = string
-  default = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
-}
-
-variable "image_type" {
-  type    = string
-  default = "LINUX_CONTAINER"
-}
-
-variable "build_timeout" {
-  type    = number
-  default = 60
-}
-
-variable "npm_pkg_token_path" {
-  type    = string
-  default = "/shared/codeBuild/shoutout/github/token"
-}
-
-variable "git_user_token" {
-  type    = string
-  default = "/shared/codeBuild/shoutout/github/user_token"
-}
-
-variable "git_user_name" {
-  type    = string
-  default = "/shared/codeBuild/shoutout/github/user_name"
-}
-
-variable "github_repo" {
-  type = string
-}
-
-variable "branch_name" {
-  type    = string
-  default = "development"
-}
-
-variable "detect_branch_changes" {
-  type = string
-  default = "true"
-}
-
-variable "account_id" {
-  type = string
+  description = "Name of the AWS CodePipeline."
+  type        = string
 }
 
 variable "region" {
-  type = string
+  description = "AWS region where resources will be created."
+  type        = string
 }
 
-variable "source_version" {
-  type    = number
-  default = 1
-
-}
-
-variable "build_version" {
-  type    = number
-  default = 1
-}
-
-# variable "bucket_suffix" {
-#   type = string
-
-# }
-
-variable "privileged_mode" {
-  type    = bool
-  default = true
+variable "account_id" {
+  description = "AWS account ID where the resources will be created."
+  type        = string
 }
 
 variable "pipeline_bucket_name" {
-  type = string
+  description = "S3 bucket name for storing pipeline artifacts."
+  type        = string
+}
 
+variable "source_connection_arn" {
+  description = "ARN of the CodeStar connection to GitHub."
+  type        = string
+}
+
+variable "github_repo" {
+  description = "GitHub repository in 'owner/repo' format."
+  type        = string
+}
+
+variable "branch_name" {
+  description = "Branch to be used in the pipeline source stage."
+  type        = string
+}
+
+variable "detect_branch_changes" {
+  description = "Whether to enable automatic detection of branch changes."
+  type        = bool
+  default     = true
+}
+
+variable "build_version" {
+  description = "CodeBuild version."
+  type        = string
+  default     = "1"
+}
+
+variable "build_timeout" {
+  description = "Timeout for the build process in minutes."
+  type        = number
+  default     = 60
+}
+
+variable "compute_type" {
+  description = "Compute type for the CodeBuild environment."
+  type        = string
+  default     = "BUILD_GENERAL1_SMALL"
+}
+
+variable "image" {
+  description = "Docker image for the CodeBuild environment."
+  type        = string
+}
+
+variable "image_type" {
+  description = "Type of the Docker image used in CodeBuild."
+  type        = string
+  default     = "LINUX_CONTAINER"
+}
+
+variable "privileged_mode" {
+  description = "Whether to enable privileged mode in CodeBuild."
+  type        = bool
+  default     = false
+}
+
+variable "git_user_name" {
+  description = "Git username stored in SSM Parameter Store."
+  type        = string
+}
+
+variable "git_user_token" {
+  description = "Git token stored in SSM Parameter Store."
+  type        = string
 }
 
 variable "buildspec_file_name" {
-  type    = string
-  default = "buildspec.yml"
-}
-
-variable "aws_kms_alias" {
-  type = string
-  default = "alias/aws/s3"
+  description = "The buildspec file used for CodeBuild."
+  type        = string
+  default     = "buildspec.yml"
 }

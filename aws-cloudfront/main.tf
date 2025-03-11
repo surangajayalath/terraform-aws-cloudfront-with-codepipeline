@@ -121,17 +121,3 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
-### route53.tf
-resource "aws_route53_record" "cdn_dns" {
-  for_each        = toset(["${var.domain_prefix}", "www.${var.domain_prefix}"])
-  allow_overwrite = true
-  name            = each.key
-  type            = "A"
-  zone_id         = var.zone_id
-
-  alias {
-    name                   = aws_cloudfront_distribution.cdn.domain_name
-    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
-    evaluate_target_health = true
-  }
-}
