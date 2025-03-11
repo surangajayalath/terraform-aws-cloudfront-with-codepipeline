@@ -45,7 +45,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         Effect    = "Allow"
         Principal = { Service = "cloudfront.amazonaws.com" }
         Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::${var.source.bucket_name}/*"
+        Resource  = "arn:aws:s3:::${var.source_bucket_name}/*"
         Condition = { "StringEquals" : { "AWS:SourceArn" : aws_cloudfront_distribution.cdn.arn } }
       },
       {
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         Effect = "Allow"
         Principal = { AWS = "arn:aws:iam::${var.account_id}:role/codebuild_role_${var.pipeline_name}" }
         Action   = "s3:*"
-        Resource = ["arn:aws:s3:::${var.source.bucket_name}", "arn:aws:s3:::${var.source.bucket_name}/*"]
+        Resource = ["arn:aws:s3:::${var.source_bucket_name}", "arn:aws:s3:::${var.source_bucket_name}/*"]
       }
     ]
   })
