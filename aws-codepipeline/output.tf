@@ -7,3 +7,8 @@ output "aws_codebuild_project_arn" {
    description = "name of the project"
    value       = aws_codebuild_project.codebuild_project.name
  }
+
+ output "pipeline_name" {
+   description = "name of the pipeline"
+   value       = aws_codepipeline.codepipeline.name
+ }

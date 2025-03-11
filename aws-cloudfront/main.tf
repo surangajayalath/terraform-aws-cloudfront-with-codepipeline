@@ -1,7 +1,7 @@
 ### main.tf
 
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = local.s3_bucket_name
+  bucket = var.source.bucket_name
   tags   = var.tags
 }
 
@@ -45,7 +45,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         Effect    = "Allow"
         Principal = { Service = "cloudfront.amazonaws.com" }
         Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::${local.s3_bucket_name}/*"
+        Resource  = "arn:aws:s3:::${var.source.bucket_name}/*"
         Condition = { "StringEquals" : { "AWS:SourceArn" : aws_cloudfront_distribution.cdn.arn } }
       },
       {
@@ -53,7 +53,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
         Effect = "Allow"
         Principal = { AWS = "arn:aws:iam::${var.account_id}:role/codebuild_role_${var.pipeline_name}" }
         Action   = "s3:*"
-        Resource = ["arn:aws:s3:::${local.s3_bucket_name}", "arn:aws:s3:::${local.s3_bucket_name}/*"]
+        Resource = ["arn:aws:s3:::${var.source.bucket_name}", "arn:aws:s3:::${var.source.bucket_name}/*"]
       }
     ]
   })
@@ -115,7 +115,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   tags = var.tags
 
   viewer_certificate {
-    acm_certificate_arn      = var.cert_arn
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }

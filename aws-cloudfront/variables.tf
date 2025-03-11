@@ -14,11 +14,6 @@ variable "source_bucket_name" {
   type        = string
 }
 
-variable "bucket_suffix" {
-  description = "A suffix added to the S3 bucket name to ensure uniqueness."
-  type        = string
-}
-
 variable "root_object_name" {
   description = "The default root object for CloudFront (e.g., index.html)."
   type        = string
@@ -33,11 +28,6 @@ variable "cdn_name" {
 variable "tags" {
   description = "A map of tags to apply to resources."
   type        = map(any)
-}
-
-variable "cert_arn" {
-  description = "The ARN of the ACM certificate to use for CloudFront."
-  type        = string
 }
 
 variable "zone_id" {
