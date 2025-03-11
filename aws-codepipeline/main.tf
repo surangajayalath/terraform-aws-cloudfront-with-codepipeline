@@ -112,16 +112,6 @@ resource "aws_codebuild_project" "codebuild_project" {
     type                        = var.image_type
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = var.privileged_mode
-    environment_variable {
-      name  = "GIT_USER_NAME"
-      value = var.git_user_name
-      type  = "PARAMETER_STORE"
-    }
-    environment_variable {
-      name  = "GIT_USER_TOKEN"
-      value = var.git_user_token
-      type  = "PARAMETER_STORE"
-    }
   }
 
   logs_config {

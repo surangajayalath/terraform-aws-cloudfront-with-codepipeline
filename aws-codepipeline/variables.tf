@@ -83,16 +83,6 @@ variable "privileged_mode" {
   default     = false
 }
 
-variable "git_user_name" {
-  description = "Git username stored in SSM Parameter Store."
-  type        = string
-}
-
-variable "git_user_token" {
-  description = "Git token stored in SSM Parameter Store."
-  type        = string
-}
-
 variable "buildspec_file_name" {
   description = "The buildspec file used for CodeBuild."
   type        = string
