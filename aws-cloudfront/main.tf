@@ -1,7 +1,7 @@
 ### main.tf
 
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = var.source.bucket_name
+  bucket = var.source_bucket_name
   tags   = var.tags
 }
 
