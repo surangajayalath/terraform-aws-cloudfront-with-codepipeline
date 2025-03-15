@@ -1,4 +1,4 @@
-# terraform-aws-cdn-with-codepipeline
+# AWS CloudFront Distribution with CodePipeline Deployments
 This module will create:
 - AWS CloudFront Distribution with an S3 Bucket as the origin.
 - AWS CodePipeline and CodeBuild to build and copy content to the S3 bucket.
@@ -6,7 +6,7 @@ This module will create:
 - Necessary IAM roles for CloudFront and the pipeline.
 - AWS ACM certificate and DNS records in Route53.
 
-# Import module and configuration
+### Usage
 ```
 module "cdn" {
   source                = "git::https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline"
