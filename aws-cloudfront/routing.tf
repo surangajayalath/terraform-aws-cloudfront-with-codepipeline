@@ -31,7 +31,7 @@ resource "aws_route53_record" "cert_dns" {
 
 ### route53.tf
 resource "aws_route53_record" "cdn_dns" {
-  depends_on = [ aws_cloudfront_distribution.cdn ]
+  depends_on      = [aws_cloudfront_distribution.cdn]
   for_each        = toset(["${var.domain_name}", "www.${var.domain_name}"])
   allow_overwrite = true
   name            = each.key

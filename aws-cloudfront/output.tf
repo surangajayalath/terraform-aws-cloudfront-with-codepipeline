@@ -21,16 +21,16 @@ output "cdn_hosted_zone_id" {
 }
 
 output "aws_codebuild_project_arn" {
-   description = "Arn of the project"
-   value       = aws_codebuild_project.codebuild_project.arn
- }
+  description = "Arn of the project"
+  value       = aws_codebuild_project.codebuild_project.arn
+}
 
- output "aws_codebuild_project_name" {
-   description = "name of the project"
-   value       = aws_codebuild_project.codebuild_project.name
- }
+output "aws_codebuild_project_name" {
+  description = "name of the project"
+  value       = aws_codebuild_project.codebuild_project.name
+}
 
- output "pipeline_name" {
-   description = "name of the pipeline"
-   value       = aws_codepipeline.codepipeline.name
- }
+output "pipeline_name" {
+  description = "name of the pipeline"
+  value       = aws_codepipeline.codepipeline.name
+}

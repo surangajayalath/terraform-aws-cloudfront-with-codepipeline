@@ -1,7 +1,7 @@
 ### variables.tf
 variable "account_id" {
-description = "The account ID of the AWS account where the S3 bucket is located."
-  type = string
+  description = "The account ID of the AWS account where the S3 bucket is located."
+  type        = string
 }
 
 variable "domain_name" {
@@ -103,7 +103,7 @@ variable "compute_type" {
 variable "image" {
   description = "Docker image for the CodeBuild environment."
   type        = string
-  default = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+  default     = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
 }
 
 variable "image_type" {
