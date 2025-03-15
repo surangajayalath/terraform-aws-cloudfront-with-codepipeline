@@ -3,7 +3,7 @@
 ################################################################################
 
 resource "aws_iam_role" "codebuild_role" {
-  name = "${var.codebuild_role_name}"
+  name = "${var.pipeline_name}-codebuild-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

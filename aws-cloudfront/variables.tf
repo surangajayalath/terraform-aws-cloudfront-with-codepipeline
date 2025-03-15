@@ -118,7 +118,3 @@ variable "buildspec_file_name" {
   type        = string
   default     = "buildspec.yml"
 }
-
-variable "codebuild_role_name" {
-  type = string
-}

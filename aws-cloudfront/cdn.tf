@@ -32,7 +32,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
     aws_iam_role.codebuild_role,
     aws_cloudfront_distribution.cdn
   ]
-  bucket     = aws_s3_bucket.s3_bucket.id
+  bucket = aws_s3_bucket.s3_bucket.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -47,7 +47,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       {
         Sid       = "AllowCodeBuildAccess"
         Effect    = "Allow"
-        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/${var.codebuild_role_name}" }
+        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/${aws_iam_role.codebuild_role.name}" }
         Action    = "s3:*"
         Resource  = ["arn:aws:s3:::${var.source_bucket_name}", "arn:aws:s3:::${var.source_bucket_name}/*"]
       }
