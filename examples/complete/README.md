@@ -12,6 +12,7 @@
 ``` aws configure --profile aws-profile ```
 
 # Provider configuration
+```
 provider "aws" {
   profile = "aws-profile"
   region  = "us-east-1"
@@ -22,8 +23,10 @@ provider "aws" {
     session_name = "session-${var.account_id}"
   }
 }
+```
 
 # Import module and configuration
+```
 module "cdn" {
   source                = "git::https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline"
   account_id            = "12345678901234"
@@ -45,3 +48,4 @@ module "cdn" {
     aws = aws.secondary
   }
 }
+```
