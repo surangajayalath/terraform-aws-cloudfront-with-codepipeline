@@ -2,6 +2,7 @@
 # IAM Role for CodeBuild
 ################################################################################
 
+# IAM Role for CodeBuild with necessary permissions
 resource "aws_iam_role" "codebuild_role" {
   name = "${var.pipeline_name}-codebuild-role"
 
@@ -15,6 +16,7 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
+# IAM Policy for CodeBuild to access logs, S3, and CloudFront
 resource "aws_iam_role_policy" "codebuild_role_policy" {
   role = aws_iam_role.codebuild_role.name
   name = "${var.pipeline_name}-codebuild-role-policy"
@@ -23,11 +25,11 @@ resource "aws_iam_role_policy" "codebuild_role_policy" {
     Statement = [
       {
         Effect   = "Allow"
-        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents" ,"logs:GetLogEvents"]
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents", "logs:GetLogEvents"]
         Resource = [
-        "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs",
-        "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs:${var.pipeline_name}-codebuild-log:*"
-      ]
+          "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs",
+          "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs:*"
+        ]
       },
       {
         Effect   = "Allow"
@@ -43,6 +45,11 @@ resource "aws_iam_role_policy" "codebuild_role_policy" {
   })
 }
 
+################################################################################
+# IAM Role for CodePipeline
+################################################################################
+
+# IAM Role for CodePipeline with required permissions
 resource "aws_iam_role" "codepipeline_role" {
   name = "${var.pipeline_name}-pipeline-role"
 
@@ -62,6 +69,7 @@ resource "aws_iam_role" "codepipeline_role" {
 EOF
 }
 
+# IAM Policy for CodePipeline to access S3, CodeBuild, and CodeStar connections
 resource "aws_iam_role_policy" "codepipeline_policy" {
   name = "${var.pipeline_name}-codepipeline-policy"
   role = aws_iam_role.codepipeline_role.id
@@ -86,17 +94,12 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "codestar-connections:UseConnection"
-      ],
+      "Action": ["codestar-connections:UseConnection"],
       "Resource": "${var.source_connection_arn}"
     },
     {
       "Effect": "Allow",
-      "Action": [
-        "codebuild:BatchGetBuilds",
-        "codebuild:StartBuild"
-      ],
+      "Action": ["codebuild:BatchGetBuilds", "codebuild:StartBuild"],
       "Resource": "*"
     }
   ]
@@ -108,6 +111,7 @@ EOF
 # CodePipeline
 ################################################################################
 
+# Define CodePipeline with Source and Build Stages
 resource "aws_codepipeline" "codepipeline" {
   name     = var.pipeline_name
   role_arn = aws_iam_role.codepipeline_role.arn
@@ -122,6 +126,7 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
+  # Source stage fetching code from GitHub
   stage {
     name = "Source"
     action {
@@ -140,6 +145,7 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
+  # Build stage running CodeBuild
   stage {
     name = "Build"
     action {
@@ -161,6 +167,7 @@ resource "aws_codepipeline" "codepipeline" {
 # CodeBuild Project
 ################################################################################
 
+# Define CodeBuild Project for the pipeline
 resource "aws_codebuild_project" "codebuild_project" {
   name          = "${var.pipeline_name}-codebuild-project"
   build_timeout = var.build_timeout
@@ -181,7 +188,7 @@ resource "aws_codebuild_project" "codebuild_project" {
   logs_config {
     cloudwatch_logs {
       group_name  = "/codebuild/buildlogs"
-      stream_name = "${var.pipeline_name}-codebuild-log"
+      stream_name = "${var.pipeline_name}-codebuild-project"
     }
   }
 
@@ -191,6 +198,11 @@ resource "aws_codebuild_project" "codebuild_project" {
   }
 }
 
+################################################################################
+# S3 Bucket for CodePipeline Artifacts
+################################################################################
+
+# Define S3 Bucket to store pipeline artifacts
 resource "aws_s3_bucket" "codepipeline_bucket" {
   bucket = var.pipeline_bucket_name
 }

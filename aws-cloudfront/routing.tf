@@ -1,17 +1,29 @@
+################################################################################
+# ACM Certificate for Domain SSL
+################################################################################
+
+# Request an ACM certificate for the domain and its www subdomain
+# Validation is done via DNS
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name
   subject_alternative_names = ["www.${var.domain_name}"]
   validation_method         = "DNS"
 
-  tags = { component = "network" }
+  tags = { 
+    component = "network" 
+  }
 
+  # Ensures the new certificate is created before the old one is destroyed
   lifecycle {
     create_before_destroy = true
   }
-
-  provider = aws.secondary # us-east-1
 }
 
+################################################################################
+# Route 53 DNS Validation for ACM Certificate
+################################################################################
+
+# Create DNS records in Route 53 for ACM certificate validation
 resource "aws_route53_record" "cert_dns" {
   for_each = {
     for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
@@ -29,7 +41,11 @@ resource "aws_route53_record" "cert_dns" {
   zone_id         = var.zone_id
 }
 
-### route53.tf
+################################################################################
+# Route 53 Alias Records for CloudFront CDN
+################################################################################
+
+# Create Route 53 alias records pointing the domain and www subdomain to CloudFront
 resource "aws_route53_record" "cdn_dns" {
   depends_on      = [aws_cloudfront_distribution.cdn]
   for_each        = toset(["${var.domain_name}", "www.${var.domain_name}"])

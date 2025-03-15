@@ -1,10 +1,16 @@
 ### main.tf
 
+################################################################################
+# S3 Bucket Configuration
+################################################################################
+
+# Creates an S3 bucket to store static website files
 resource "aws_s3_bucket" "s3_bucket" {
   bucket = var.source_bucket_name
   tags   = var.tags
 }
 
+# Configures S3 bucket ownership to allow object ownership by the writer
 resource "aws_s3_bucket_ownership_controls" "s3_bucket_owner" {
   bucket = aws_s3_bucket.s3_bucket.id
 
@@ -13,12 +19,14 @@ resource "aws_s3_bucket_ownership_controls" "s3_bucket_owner" {
   }
 }
 
+# Sets the bucket ACL to private to restrict access
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
   depends_on = [aws_s3_bucket_ownership_controls.s3_bucket_owner]
   bucket     = aws_s3_bucket.s3_bucket.id
   acl        = "private"
 }
 
+# Blocks all public access to the S3 bucket
 resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   bucket                  = aws_s3_bucket.s3_bucket.id
   block_public_acls       = true
@@ -27,6 +35,7 @@ resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   restrict_public_buckets = true
 }
 
+# Defines an S3 bucket policy allowing access from CloudFront and CodeBuild
 resource "aws_s3_bucket_policy" "s3_bucket_policy" {
   depends_on = [
     aws_iam_role.codebuild_role,
@@ -55,6 +64,11 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
   })
 }
 
+################################################################################
+# CloudFront Configuration
+################################################################################
+
+# Creates an Origin Access Control (OAC) for secure CloudFront access to S3
 resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
   name                              = var.cdn_name
   description                       = "${var.cdn_name} policy"
@@ -63,6 +77,7 @@ resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
   signing_protocol                  = "sigv4"
 }
 
+# Creates a CloudFront distribution to serve static website content from S3
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name              = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
@@ -94,6 +109,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
+  # Handles custom error responses (redirects 403/404 errors to index.html)
   custom_error_response {
     error_caching_min_ttl = 300
     error_code            = 403
@@ -118,6 +134,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   tags = var.tags
 
+  # Configures SSL/TLS settings using ACM certificate
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate.cert.arn
     ssl_support_method       = "sni-only"
