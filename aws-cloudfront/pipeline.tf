@@ -23,8 +23,11 @@ resource "aws_iam_role_policy" "codebuild_role_policy" {
     Statement = [
       {
         Effect   = "Allow"
-        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-        Resource = "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.codebuild_project.name}:*"
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents" ,"logs:GetLogEvents"]
+        Resource = [
+        "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs",
+        "arn:aws:logs:${var.region}:${var.account_id}:log-group:/codebuild/buildlogs:${var.pipeline_name}-codebuild-log:*"
+      ]
       },
       {
         Effect   = "Allow"
@@ -178,7 +181,7 @@ resource "aws_codebuild_project" "codebuild_project" {
   logs_config {
     cloudwatch_logs {
       group_name  = "/codebuild/buildlogs"
-      stream_name = aws_codebuild_project.codebuild_project.name
+      stream_name = "${var.pipeline_name}-codebuild-log"
     }
   }
 
