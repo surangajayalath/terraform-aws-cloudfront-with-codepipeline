@@ -1,0 +1,19 @@
+version: 0.2
+env:
+  variables:
+    BUCKET_NAME: devops-app-build-files-us-east-1
+
+phases:
+  commands:
+      - node -v
+      - npm install
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - echo Uploading the artifacts to S3 bucket
+      - aws s3 cp dist s3://$BUCKET_NAME/ --recursive
+      - echo TODO Creating an invalidation on Cloud Front distribution
+      - aws cloudfront create-invalidation --distribution-id [distribution-id] --paths "/*" --query Invalidation.Status
+      - echo Build completed on `date`
