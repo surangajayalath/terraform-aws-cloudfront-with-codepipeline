@@ -35,11 +35,6 @@ variable "zone_id" {
   type        = string
 }
 
-variable "pipeline_name" {
-  description = "The name of the CI/CD pipeline that requires access to the S3 bucket."
-  type        = string
-}
-
 
 
 ################################################################################
@@ -58,11 +53,6 @@ variable "pipeline_name" {
 
 variable "region" {
   description = "AWS region where resources will be created."
-  type        = string
-}
-
-variable "account_id" {
-  description = "AWS account ID where the resources will be created."
   type        = string
 }
 
