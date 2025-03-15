@@ -7,7 +7,8 @@ This module will create:
 - AWS ACM certificate and DNS records in Route53.
 
 ### Diagram
-https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline/blob/v1.0.0/diagram.drawio.svg
+https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline/blob/main/diagram.drawio.svg
+
 
 ### Usage
 ```
