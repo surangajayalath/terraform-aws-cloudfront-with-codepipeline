@@ -1,17 +1,15 @@
-################################################################################
-# terraform-aws-cdn-with-codepipeline
-################################################################################
+# AWS CDN with CodePipeline Example
 
-# Configure AWS profile
-## Input Values for profile configuration
+## Configure AWS profile
+### Input Values for profile configuration
 - AWS SECRET KEY
 - AWS SECRET KEY ID
 - REGION
 
-## Command
+### Command
 ``` aws configure --profile aws-profile ```
 
-# Provider configuration
+### Provider configuration
 ```
 provider "aws" {
   profile = "aws-profile"
@@ -20,7 +18,7 @@ provider "aws" {
 }
 ```
 
-# Import module and configuration
+### Import module and configuration
 ```
 module "cdn" {
   source                = "git::https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline"

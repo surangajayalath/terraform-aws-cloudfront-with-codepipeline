@@ -6,6 +6,9 @@ This module will create:
 - Necessary IAM roles for CloudFront and the pipeline.
 - AWS ACM certificate and DNS records in Route53.
 
+### Diagram
+https://github.com/surangajayalath/terraform-aws-cdn-with-codepipeline/blob/v1.0.0/diagram.drawio.svg
+
 ### Usage
 ```
 module "cdn" {
