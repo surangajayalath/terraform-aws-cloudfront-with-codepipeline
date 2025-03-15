@@ -36,6 +36,7 @@ resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
 }
 
 resource "aws_s3_bucket_policy" "s3_bucket_policy" {
+  depends_on = [ aws_iam_role.codebuild_role ]
   bucket = aws_s3_bucket.s3_bucket.id
   policy = jsonencode({
     Version = "2012-10-17"
@@ -51,7 +52,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       {
         Sid    = "AllowCodeBuildAccess"
         Effect = "Allow"
-        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/codebuild_role_${var.pipeline_name}" }
+        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/codebuild-role-${var.pipeline_name}" }
         Action   = "s3:*"
         Resource = ["arn:aws:s3:::${var.source_bucket_name}", "arn:aws:s3:::${var.source_bucket_name}/*"]
       }
