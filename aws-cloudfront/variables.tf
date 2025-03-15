@@ -41,11 +41,6 @@ variable "zone_id" {
 # Variables
 ################################################################################
 
-variable "project_name" {
-  description = "The name of the project. Used in resource naming."
-  type        = string
-}
-
 variable "pipeline_name" {
   description = "Name of the AWS CodePipeline."
   type        = string
@@ -122,4 +117,8 @@ variable "buildspec_file_name" {
   description = "The buildspec file used for CodeBuild."
   type        = string
   default     = "buildspec.yml"
+}
+
+variable "codebuild_role_name" {
+  type = string
 }

@@ -3,7 +3,7 @@
 ################################################################################
 
 resource "aws_iam_role" "codebuild_role" {
-  name = "codebuild-role-${var.project_name}"
+  name = "${var.codebuild_role_name}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -17,14 +17,14 @@ resource "aws_iam_role" "codebuild_role" {
 
 resource "aws_iam_role_policy" "codebuild_role_policy" {
   role = aws_iam_role.codebuild_role.name
-  name = "codebuild-role-policy-${var.project_name}"
+  name = "${var.pipeline_name}-codebuild-role-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Effect   = "Allow"
         Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
-        Resource = "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/codebuild/${var.project_name}:*"
+        Resource = "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/codebuild/${aws_codebuild_project.codebuild_project.name}:*"
       },
       {
         Effect   = "Allow"
@@ -77,8 +77,8 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         "s3:PutObject"
       ],
       "Resource": [
-        "${data.aws_s3_bucket.codepipeline_bucket.arn}",
-        "${data.aws_s3_bucket.codepipeline_bucket.arn}/*"
+        "${aws_s3_bucket.codepipeline_bucket.arn}",
+        "${aws_s3_bucket.codepipeline_bucket.arn}/*"
       ]
     },
     {
@@ -110,7 +110,7 @@ resource "aws_codepipeline" "codepipeline" {
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = data.aws_s3_bucket.codepipeline_bucket.bucket
+    location = aws_s3_bucket.codepipeline_bucket.bucket
     type     = "S3"
 
     encryption_key {
@@ -159,7 +159,7 @@ resource "aws_codepipeline" "codepipeline" {
 ################################################################################
 
 resource "aws_codebuild_project" "codebuild_project" {
-  name          = var.project_name
+  name          = "${var.pipeline_name}-codebuild-project"
   build_timeout = var.build_timeout
   service_role  = aws_iam_role.codebuild_role.arn
 
@@ -178,7 +178,7 @@ resource "aws_codebuild_project" "codebuild_project" {
   logs_config {
     cloudwatch_logs {
       group_name  = "/codebuild/buildlogs"
-      stream_name = var.project_name
+      stream_name = aws_codebuild_project.codebuild_project.name
     }
   }
 
@@ -186,4 +186,8 @@ resource "aws_codebuild_project" "codebuild_project" {
     type      = "CODEPIPELINE"
     buildspec = var.buildspec_file_name
   }
+}
+
+resource "aws_s3_bucket" "codepipeline_bucket" {
+  bucket = var.pipeline_bucket_name
 }

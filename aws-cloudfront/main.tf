@@ -27,16 +27,11 @@ resource "aws_s3_bucket_public_access_block" "s3_bucket_access" {
   restrict_public_buckets = true
 }
 
-resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
-  name                              = var.cdn_name
-  description                       = "${var.cdn_name} policy"
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-
 resource "aws_s3_bucket_policy" "s3_bucket_policy" {
-  depends_on = [aws_iam_role.codebuild_role]
+  depends_on = [
+    aws_iam_role.codebuild_role,
+    aws_cloudfront_distribution.cdn
+  ]
   bucket     = aws_s3_bucket.s3_bucket.id
   policy = jsonencode({
     Version = "2012-10-17"
@@ -52,12 +47,20 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy" {
       {
         Sid       = "AllowCodeBuildAccess"
         Effect    = "Allow"
-        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/codebuild-role-${var.pipeline_name}" }
+        Principal = { AWS = "arn:aws:iam::${var.account_id}:role/${var.codebuild_role_name}" }
         Action    = "s3:*"
         Resource  = ["arn:aws:s3:::${var.source_bucket_name}", "arn:aws:s3:::${var.source_bucket_name}/*"]
       }
     ]
   })
+}
+
+resource "aws_cloudfront_origin_access_control" "cloudfront_oac" {
+  name                              = var.cdn_name
+  description                       = "${var.cdn_name} policy"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
@@ -121,4 +124,3 @@ resource "aws_cloudfront_distribution" "cdn" {
     minimum_protocol_version = "TLSv1.2_2018"
   }
 }
-
