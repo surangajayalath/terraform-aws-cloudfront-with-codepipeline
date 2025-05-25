@@ -16,10 +16,10 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
-# IAM Policy for CodeBuild to access logs, S3, and CloudFront
 resource "aws_iam_role_policy" "codebuild_role_policy" {
   role = aws_iam_role.codebuild_role.name
   name = "${var.pipeline_name}-codebuild-role-policy"
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -40,10 +40,16 @@ resource "aws_iam_role_policy" "codebuild_role_policy" {
         Effect   = "Allow"
         Action   = ["cloudfront:CreateInvalidation"]
         Resource = "arn:aws:cloudfront::${var.account_id}:distribution/*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = "arn:aws:secretsmanager:${var.region}:${var.account_id}:secret:*"
       }
     ]
   })
 }
+
 
 ################################################################################
 # IAM Role for CodePipeline
